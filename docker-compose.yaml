@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  todo-api:
+    image: nrkt/spring-boot-todo-api:0.0.1
+    container_name: todo-api
+    environment:
+      COUCHBASE_CONNECTION: couchbase:11210
+      COUCHBASE_BUCKET: todo
+      COUCHBASE_USERNAME: nrkt
+      COUCHBASE_PASSWORD: root12345
+      JWT_SECRET: nrkt
+      JWT_EXPIRATION_MS: 86400000
+      JWT_ISSUER: nrk
+      SWAGGER-UI-ENABLED: "true"
+    ports:
+    - 8080:8080
+
+  #https://github.com/bentonam/couchbase-docker
+  couchbase:
+    image: bentonam/couchbase-docker:community-5.0.1
+    container_name: couchbase
+    environment:
+      SERVICES: data,index,query,fts
+      CLUSTER_USERNAME: nrkt
+      CLUSTER_PASSWORD: root12345
+      CLUSTER_NAME: TODO Couchbase Cluster
+      CLUSTER_RAMSIZE: 500
+      BUCKET_RAMSIZE: 300
+      NODE_INIT_INDEX_PATH: /opt/couchbase/var/lib/couchbase/indexes
+      RBAC_USERNAME: root
+      RBAC_PASSWORD: toor
+      BUCKET: todo
+    ports:
+      - 8091-8094:8091-8094
+      - 11210:11210
+    volumes:
+      - couchbase-data:/opt/couchbase/var
+
+volumes:
+  couchbase-data:
